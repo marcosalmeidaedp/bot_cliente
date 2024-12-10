@@ -12,7 +12,7 @@ from telegram.ext import (
 )
 
 # Carregar a base de dados
-EXCEL_FILE = r'C:\Users\10205487\Downloads\DADOS_CLIENTES - INSTALAÇÃO E COORDENADAS.xlsx'
+EXCEL_FILE = 'DADOS_CLIENTES - INSTALAÇÃO E COORDENADAS.xlsx'
 
 if not os.path.exists(EXCEL_FILE):
     raise FileNotFoundError(f"Erro: O arquivo '{EXCEL_FILE}' não foi encontrado.")
