@@ -11,17 +11,14 @@ from telegram.ext import (
     ContextTypes,
 )
 
-# Carregar a base de dados
-EXCEL_FILE = r'C:\Users\10205487\Downloads\DADOS_CLIENTES - INSTALAÇÃO E COORDENADAS.xlsx'
+EXCEL_FILE = 'DADOS_CLIENTES - INSTALAÇÃO E COORDENADAS.xlsx'
 
 if not os.path.exists(EXCEL_FILE):
     raise FileNotFoundError(f"Erro: O arquivo '{EXCEL_FILE}' não foi encontrado.")
 
 try:
-    df = pd.read_excel(EXCEL_FILE)
+    df = pd.read_excel(EXCEL_FILE, engine="openpyxl")
     df.columns = [unicodedata.normalize('NFKD', str(col)).encode('ascii', 'ignore').decode('utf-8').strip() for col in df.columns]
-except Exception as e:
-    raise RuntimeError(f"Erro ao carregar o arquivo Excel: {e}")
 
 # Função para normalizar texto
 def normalize_text(text):
