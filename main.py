@@ -10,6 +10,17 @@ from telegram.ext import (
     filters,
     ContextTypes,
 )
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return "Hello World!"
+
+if __name__ == "__main__":
+    port = int(os.environ.get('PORT', 5000))  # Usa a porta fornecida pela plataforma, ou 5000 por padrão
+    app.run(host='0.0.0.0', port=port)  # Ouvindo na porta correta
 
 # Carregar a base de dados
 EXCEL_FILE = 'DADOS_CLIENTES - INSTALAÇÃO E COORDENADAS.xlsx'
