@@ -1,8 +1,6 @@
-import os
-import logging
-import unicodedata
 import pandas as pd
-from flask import Flask, request
+import os
+import unicodedata
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -13,31 +11,15 @@ from telegram.ext import (
     ContextTypes,
 )
 
-# Configuração do logger
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-logger = logging.getLogger(__name__)
-
-# Inicialização do Flask
-app = Flask(__name__)
-
 # Carregar a base de dados
-EXCEL_FILE = 'DADOS_CLIENTES - INSTALAÇÃO E COORDENADAS.xlsx'
+EXCEL_FILE = r'C:\Users\10205487\Downloads\DADOS_CLIENTES - INSTALAÇÃO E COORDENADAS.xlsx'
 
 if not os.path.exists(EXCEL_FILE):
     raise FileNotFoundError(f"Erro: O arquivo '{EXCEL_FILE}' não foi encontrado.")
 
 try:
-    df = pd.read_excel(EXCEL_FILE, engine="openpyxl")
+    df = pd.read_excel(EXCEL_FILE)
     df.columns = [unicodedata.normalize('NFKD', str(col)).encode('ascii', 'ignore').decode('utf-8').strip() for col in df.columns]
-    
-    # Verificar colunas esperadas
-    expected_columns = ['Nome', 'Instalacao', 'Medidor', 'Latitude', 'Longitude']
-    for col in expected_columns:
-        if col not in df.columns:
-            raise ValueError(f"A coluna esperada '{col}' não está presente no arquivo Excel.")
 except Exception as e:
     raise RuntimeError(f"Erro ao carregar o arquivo Excel: {e}")
 
@@ -148,8 +130,8 @@ async def handle_restart_or_close(update: Update, context: ContextTypes.DEFAULT_
         await query.message.reply_text("Obrigado por usar o bot! Até a próxima! 👋")
         return
 
-# Configuração do Telegram Bot
-BOT_TOKEN = '7633698590:AAGrm014F5D5FDPyP7f7-6QTkpE18CQ4WvY'  # Token inserido diretamente
+# Configuração do Token e inicialização
+BOT_TOKEN = "7633698590:AAGrm014F5D5FDPyP7f7-6QTkpE18CQ4WvY"
 
 application = Application.builder().token(BOT_TOKEN).build()
 
@@ -158,15 +140,5 @@ application.add_handler(CallbackQueryHandler(search, pattern='^(nome|instalacao|
 application.add_handler(CallbackQueryHandler(handle_restart_or_close, pattern='^(restart|close)$'))
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-# Webhook para Render
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    json_data = request.get_json()
-    update = Update.de_json(json_data, application.bot)
-    application.process_update(update)
-    return "ok", 200
-
-# Inicialização do servidor Flask
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 8000))
-    app.run(host="0.0.0.0", port=port)
+    application.run_polling()
