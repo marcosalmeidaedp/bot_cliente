@@ -149,7 +149,7 @@ async def handle_restart_or_close(update: Update, context: ContextTypes.DEFAULT_
         return
 
 # Configuração do Telegram Bot
-BOT_TOKEN = os.environ.get('BOT_TOKEN')
+BOT_TOKEN = '7633698590:AAGrm014F5D5FDPyP7f7-6QTkpE18CQ4WvY'  # Token inserido diretamente
 
 application = Application.builder().token(BOT_TOKEN).build()
 
